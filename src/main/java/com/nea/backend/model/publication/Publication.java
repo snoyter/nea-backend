@@ -1,6 +1,6 @@
-package com.nea.backend.model;
+package com.nea.backend.model.publication;
 
-import com.nea.backend.enums.PublicationType;
+import com.nea.backend.model.publication.PublicationType;
 import jakarta.persistence.*;
 import lombok.Data;
 

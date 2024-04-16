@@ -1,5 +1,6 @@
 package com.nea.backend.model;
 
+import com.nea.backend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

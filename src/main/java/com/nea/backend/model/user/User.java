@@ -1,6 +1,5 @@
-package com.nea.backend.model;
+package com.nea.backend.model.user;
 
-import com.nea.backend.enums.UserType;
 import jakarta.persistence.*;
 import lombok.Data;
 
