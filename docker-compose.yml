@@ -1,0 +1,27 @@
+version: '3'
+services:
+  nea-backend:
+    build: .
+    container_name: nea-backend
+    environment:
+      DB_HOST: nea-db
+      DB_PORT: 5432
+      DB_NAME: nea
+      DB_USERNAME: nastya
+      DB_PASSWORD: 123321
+    ports:
+      - '8080:8080'
+    depends_on:
+      - nea-db
+
+  nea-db:
+    image: postgres
+    container_name: nea-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: nea
+      POSTGRES_USER: nastya
+      POSTGRES_PASSWORD: 123321
+    volumes:
+      - ./data:/var/lib/postgresql/data
