@@ -27,7 +27,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "type", nullable = false)
-    private UserType type;
+    private UserType userType;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -36,7 +36,7 @@ public class User {
         this.name = dto.getName();
         this.login = dto.getLogin();
         this.password = dto.getPassword();
-        this.type = userType;
+        this.userType = userType;
         this.createdAt = Instant.now();
     }
 }

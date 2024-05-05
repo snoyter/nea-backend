@@ -1,8 +1,8 @@
 package com.nea.backend.controller;
 
 import com.nea.backend.dto.PublicationCreateDto;
-import com.nea.backend.dto.UserCreateDTO;
-import com.nea.backend.model.*;
+import com.nea.backend.model.Publication;
+import com.nea.backend.model.PublicationType;
 import com.nea.backend.repository.PublicationRepository;
 import com.nea.backend.repository.PublicationTypeRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,6 +34,7 @@ public class PublicationController {
     }
 
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public Publication create(@RequestBody PublicationCreateDto dto) {
         PublicationType type = publicationTypeRepository.findById(dto.getTypeId())
                 .orElseThrow(() -> new RuntimeException("нет такого типа контента"));
