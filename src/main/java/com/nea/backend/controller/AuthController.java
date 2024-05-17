@@ -9,14 +9,20 @@ import com.nea.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Модуль авторизации
+ * */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -45,7 +51,9 @@ public class AuthController {
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
-        return ResponseEntity.ok(new JwtResponseModel(jwtToken));
+        MultiValueMap<String,String> headers = new LinkedMultiValueMap<>();
+        headers.add("Set-Cookie", "accessToken=" + jwtToken +"; HttpOnly; Secure;");
+        return new ResponseEntity<>(new JwtResponseModel(jwtToken), headers, HttpStatus.OK);
     }
 
     @PostMapping("/register")
@@ -53,5 +61,4 @@ public class AuthController {
     public void register(@RequestBody UserCreateDTO request) {
         userService.create(request);
     }
-
 }

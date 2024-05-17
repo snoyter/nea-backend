@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/publication")
 @Tag(name = "Публикации")
@@ -23,7 +25,13 @@ public class PublicationController {
     private final PublicationTypeRepository publicationTypeRepository;
 
     @GetMapping
-    public Page<Publication> getAll(Pageable pageable) {
+    public Page<Publication> getAll(Pageable pageable, @RequestParam(value = "type",required = false) Integer publicationType) {
+        if (publicationType != null) {
+            Optional<PublicationType> type = publicationTypeRepository.findById(publicationType);
+            if (type.isPresent()) {
+                return publicationRepository.findAllByType(pageable, type.get());
+            }
+        }
         return publicationRepository.findAll(pageable);
     }
 
