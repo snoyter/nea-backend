@@ -2,6 +2,7 @@ package com.nea.backend.service;
 
 import com.nea.backend.dto.UserCreateDTO;
 import com.nea.backend.dto.UserLoginDTO;
+import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.User;
 import com.nea.backend.model.UserType;
 import com.nea.backend.repository.UserRepository;
@@ -47,6 +48,6 @@ public class UserService {
 
     public User getUserByUsername(String username) {
         return userRepository.findByLogin(username)
-                .orElseThrow(() -> new RuntimeException("Нет такого пользователя"));
+                .orElseThrow(ApiError.UserNotExist::new);
     }
 }

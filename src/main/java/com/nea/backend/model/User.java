@@ -16,9 +16,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(nullable = false, unique = true, updatable = false)
     private String login;
 
@@ -33,8 +30,7 @@ public class User {
     private Instant createdAt;
 
     public User(UserCreateDTO dto, UserType userType) {
-        this.name = dto.getName();
-        this.login = dto.getLogin();
+        this.login = dto.getEmail();
         this.password = dto.getPassword();
         this.userType = userType;
         this.createdAt = Instant.now();

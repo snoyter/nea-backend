@@ -1,11 +1,13 @@
 package com.nea.backend.model;
 
-import com.nea.backend.dto.DumpCreateDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,14 +30,27 @@ public class Dump {
     @Column(nullable = false)
     private Double latitude;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(schema = "public", name = "dump_to_file",
+            joinColumns = @JoinColumn(name = "dump_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+    @Fetch(FetchMode.SUBSELECT)
+    private List<File> pictures;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public Dump(DumpCreateDTO dump, User user) {
-        this.comment = dump.getComment();
+    public Dump(
+            String comment,
+            User user,
+            Double longitude,
+            Double latitude
+    ) {
+        this.comment = comment;
         this.user = user;
-        this.longitude = dump.getLongitude();
-        this.latitude = dump.getLatitude();
-        this.createdAt = dump.getCreatedAt();
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.createdAt = Instant.now();
     }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +27,7 @@ public class UserController {
         return new UserDTO(currentUser.getUser());
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping
     public User create(@RequestBody UserCreateDTO dto) {
         return userService.create(dto);

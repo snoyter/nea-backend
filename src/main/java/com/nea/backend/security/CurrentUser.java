@@ -1,5 +1,6 @@
 package com.nea.backend.security;
 
+import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.User;
 import com.nea.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,11 @@ public class CurrentUser {
 
     public User getUser() {
         if (user == null) {
-            user = userService.getUserByUsername(getJwtUser().getUsername());
+            UserDetails jwtUser = getJwtUser();
+            if (jwtUser == null) {
+                throw new ApiError.UserNotLoggedIn();
+            }
+            user = userService.getUserByUsername(jwtUser.getUsername());
         }
         return user;
     }
