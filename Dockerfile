@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:experimental
 
-ARG JAVA_VERSION=16
+ARG JAVA_VERSION=17
 
 #
 # BASE
@@ -42,7 +42,7 @@ FROM eclipse-temurin:$JAVA_VERSION-alpine  as result
 ARG VERSION=0.0.1-SNAPSHOT
 
 WORKDIR /app
-COPY --from=build /app/build/libs/nea-backend-${VERSION}.jar nea-backend.jar
+COPY --from=build /app/build/libs/backend-${VERSION}.jar nea-backend.jar
 
 CMD [ \
     "java", \
