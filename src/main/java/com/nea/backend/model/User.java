@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Data
 @Entity
-@Table(schema = "public", name = "usr")
+@Table(schema = "public", name = "users")
 @NoArgsConstructor
 public class User {
     @Id
