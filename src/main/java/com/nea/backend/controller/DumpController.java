@@ -13,15 +13,12 @@ import com.nea.backend.security.CurrentUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/dump")
 @Tag(name = "Свалки")
@@ -47,14 +45,8 @@ public class DumpController {
         return dumpRepository.findAll(pageable);
     }
 
-    @GetMapping("{id}")
-    public Dump getAll(@PathVariable("id") Integer id) {
-        return dumpRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Нет такой сущности"));
-    }
-
     @PostMapping
-    public SuccessImageUploadResponse uploadFiles(
+    public SuccessImageUploadResponse createDump(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("comment") String comment,
             @RequestParam("longitude") String longitude,
@@ -66,7 +58,14 @@ public class DumpController {
             try {
                 try {
                     Files.copy(i.getInputStream(), this.root.resolve(i.getOriginalFilename()));
-                } catch (FileAlreadyExistsException ex) {}
+                } catch (FileAlreadyExistsException ex) {
+                    return fileRepository.findByContent(i.getOriginalFilename())
+                            .orElse(new File(
+                                    i.getName(),
+                                    i.getOriginalFilename(),
+                                    i.getContentType()
+                            ));
+                }
                 return new File(
                         i.getName(),
                         i.getOriginalFilename(),

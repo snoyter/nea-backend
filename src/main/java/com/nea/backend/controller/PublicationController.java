@@ -1,6 +1,7 @@
 package com.nea.backend.controller;
 
 import com.nea.backend.dto.PublicationCreateDto;
+import com.nea.backend.dto.PublicationUpdateDto;
 import com.nea.backend.model.Publication;
 import com.nea.backend.model.PublicationType;
 import com.nea.backend.repository.PublicationRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/publication")
 @Tag(name = "Публикации")
@@ -25,7 +27,10 @@ public class PublicationController {
     private final PublicationTypeRepository publicationTypeRepository;
 
     @GetMapping
-    public Page<Publication> getAll(Pageable pageable, @RequestParam(value = "type",required = false) Integer publicationType) {
+    public Page<Publication> getAll(
+            Pageable pageable,
+            @RequestParam(value = "type",required = false) Integer publicationType
+    ) {
         if (publicationType != null) {
             Optional<PublicationType> type = publicationTypeRepository.findById(publicationType);
             if (type.isPresent()) {
@@ -33,6 +38,39 @@ public class PublicationController {
             }
         }
         return publicationRepository.findAll(pageable);
+    }
+
+    @PutMapping
+    public void update(
+            @RequestBody PublicationUpdateDto dto
+    ) {
+        Publication publicationFromDB = publicationRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Нет такой публикации!"));
+        publicationFromDB.setContent(dto.getContent());
+        publicationFromDB.setTitle(dto.getTitle());
+        PublicationType publicationType = publicationTypeRepository.findById(dto.getTypeId())
+                .orElseThrow(() -> new RuntimeException("Нет такого типа данных!"));
+        publicationFromDB.setType(publicationType);
+        publicationRepository.save(publicationFromDB);
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(
+            @PathVariable("id") Integer id
+    ) {
+        publicationRepository.deleteById(id);
+    }
+
+    @GetMapping("/search")
+    public Page<Publication> search(
+            Pageable pageable,
+            @RequestParam("search") String searchQuery
+    ) {
+        return publicationRepository.findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCase(
+                pageable,
+                searchQuery,
+                searchQuery
+        );
     }
 
     @GetMapping("{id}")

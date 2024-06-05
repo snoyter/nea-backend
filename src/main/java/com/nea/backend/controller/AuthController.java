@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Модуль авторизации
  * */
+@CrossOrigin
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class AuthController {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
+                            request.getEmail(),
                             request.getPassword()
                     )
             );
@@ -49,7 +50,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
         MultiValueMap<String,String> headers = new LinkedMultiValueMap<>();
         headers.add("Set-Cookie", "accessToken=" + jwtToken +"; HttpOnly; Secure;");

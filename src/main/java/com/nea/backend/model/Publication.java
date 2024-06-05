@@ -1,6 +1,7 @@
 package com.nea.backend.model;
 
 import com.nea.backend.dto.PublicationCreateDto;
+import com.nea.backend.dto.PublicationUpdateDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,7 @@
 package com.nea.backend.service;
 
+import com.nea.backend.dto.UserChangePasswordDto;
+import com.nea.backend.dto.UserChangeTypeDto;
 import com.nea.backend.dto.UserCreateDTO;
 import com.nea.backend.dto.UserLoginDTO;
 import com.nea.backend.exception.ApiError;
@@ -7,6 +9,7 @@ import com.nea.backend.model.User;
 import com.nea.backend.model.UserType;
 import com.nea.backend.repository.UserRepository;
 import com.nea.backend.repository.UserTypeRepository;
+import com.nea.backend.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
+
+    private final CurrentUser currentUser;
 
     @Autowired
     @Lazy
@@ -41,13 +46,37 @@ public class UserService {
         return userRepository.save(new User(dto, type));
     }
 
-    public User getByNameAndPassword(UserLoginDTO dto) {
-        return userRepository.findByLoginAndPassword(dto.getUsername(), dto.getPassword())
-                .orElseThrow(() -> new RuntimeException("Нет такого пользователя"));
+    public void createNewEmployee(UserCreateDTO dto) {
+        UserType type = userTypeRepository.findById(1)
+                .orElseThrow(() -> new RuntimeException("Нет такого типа пользователей"));
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(new User(dto, type));
     }
 
     public User getUserByUsername(String username) {
         return userRepository.findByLogin(username)
                 .orElseThrow(ApiError.UserNotExist::new);
+    }
+
+    public void changeUserType(UserChangeTypeDto userChangeTypeDto) {
+        User user = getOneById(userChangeTypeDto.getId());
+        UserType type = userTypeRepository.findById(userChangeTypeDto.getUserTypeId())
+                .orElseThrow(() -> new RuntimeException("Нет такого типа пользователей"));
+        user.setUserType(type);
+    }
+
+    public void delete(Integer id) {
+        userRepository.deleteById(id);
+    }
+
+    public void changePassword(
+            UserChangePasswordDto dto
+    ) {
+        User user = userRepository.findById(currentUser.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Нет такого пользователя!"));
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Старый пароль не одинаковый!");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
     }
 }
