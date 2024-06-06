@@ -3,7 +3,7 @@ package com.nea.backend.controller;
 import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.Dump;
 import com.nea.backend.model.DumpToFiles;
-import com.nea.backend.model.File;
+import com.nea.backend.model.Picture;
 import com.nea.backend.model.User;
 import com.nea.backend.repository.DumpRepository;
 import com.nea.backend.repository.DumpToFileRepository;
@@ -13,6 +13,7 @@ import com.nea.backend.security.CurrentUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/dump")
@@ -54,30 +56,35 @@ public class DumpController {
     ) {
         User user = currentUser.getUser();
 
+        if (!root.toFile().exists()) {
+            root.toFile().mkdir();
+        }
+
         List<Integer> uploadImagesIds = Arrays.stream(files).map(i -> {
             try {
                 try {
                     Files.copy(i.getInputStream(), this.root.resolve(i.getOriginalFilename()));
                 } catch (FileAlreadyExistsException ex) {
                     return fileRepository.findByContent(i.getOriginalFilename())
-                            .orElse(new File(
+                            .orElse(new Picture(
                                     i.getName(),
                                     i.getOriginalFilename(),
                                     i.getContentType()
                             ));
                 }
-                return new File(
+                return new Picture(
                         i.getName(),
                         i.getOriginalFilename(),
                         i.getContentType()
                 );
             } catch (IOException e) {
+                log.error("Ошибка {}", e);
                 throw new ApiError.FileUploadException();
             }
-        }).map(file -> {
-            File savedFile = fileRepository.save(file);
+        }).map(picture -> {
+            Picture savedPicture = fileRepository.save(picture);
             fileRepository.flush();
-            return savedFile.getId();
+            return savedPicture.getId();
         }).toList();
 
         Dump dump = new Dump(

@@ -36,7 +36,7 @@ public class Dump {
             inverseJoinColumns = @JoinColumn(name = "file_id")
     )
     @Fetch(FetchMode.SUBSELECT)
-    private List<File> pictures;
+    private List<Picture> pictures;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;

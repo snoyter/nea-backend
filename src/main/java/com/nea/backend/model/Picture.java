@@ -1,7 +1,6 @@
 package com.nea.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ import java.time.Instant;
 @Entity
 @Table(schema = "public", name = "file")
 @NoArgsConstructor
-public class File {
+public class Picture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +27,7 @@ public class File {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public File(String name, String content, String type) {
+    public Picture(String name, String content, String type) {
         this.name = name;
         this.content = content;
         this.type = type;

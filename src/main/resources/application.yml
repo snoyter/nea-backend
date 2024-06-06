@@ -1,4 +1,10 @@
 spring:
+  mvc:
+    static-path-pattern: /uploads/**
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
   application:
     name: backend
   profiles:
@@ -20,6 +26,9 @@ spring:
     generate-ddl: false
   flyway:
     enabled: true
+  web:
+    resources:
+      static-locations: file:/app/uploads
 
 jwt:
   secret: test123321SSS
