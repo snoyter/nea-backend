@@ -58,12 +58,16 @@ public class DumpController {
 
         if (!root.toFile().exists()) {
             root.toFile().mkdir();
+            this.root.toFile().setReadable(true);
+            this.root.toFile().setWritable(true);
         }
 
         List<Integer> uploadImagesIds = Arrays.stream(files).map(i -> {
             try {
                 try {
-                    Files.copy(i.getInputStream(), this.root.resolve(i.getOriginalFilename()));
+                    Path resolve = this.root.resolve(i.getOriginalFilename());
+                    resolve.toFile().setReadable(true);
+                    Files.copy(i.getInputStream(), resolve);
                 } catch (FileAlreadyExistsException ex) {
                     return fileRepository.findByContent(i.getOriginalFilename())
                             .orElse(new Picture(
