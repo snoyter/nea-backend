@@ -8,9 +8,10 @@ import com.nea.backend.security.TokenManager;
 import com.nea.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -37,7 +38,9 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Авторизация пользователя")
-    public ResponseEntity<JwtResponseModel> login(@RequestBody UserLoginDTO request) throws Exception {
+    public ResponseEntity<JwtResponseModel> login(
+            @RequestBody UserLoginDTO request
+    ) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -52,9 +55,15 @@ public class AuthController {
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
-        MultiValueMap<String,String> headers = new LinkedMultiValueMap<>();
-        headers.add("Set-Cookie", "accessToken=" + jwtToken +"; HttpOnly; Secure;");
-        return new ResponseEntity<>(new JwtResponseModel(jwtToken), headers, HttpStatus.OK);
+        HttpCookie cookie = ResponseCookie.from("accessToken", jwtToken)
+                .path("/")
+                .httpOnly(true)
+                .domain("")
+                .secure(true)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, String.valueOf(cookie))
+                .body(new JwtResponseModel(jwtToken));
     }
 
     @PostMapping("/register")
