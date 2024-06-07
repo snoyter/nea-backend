@@ -21,6 +21,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+
 /**
  * Модуль авторизации
  * */
@@ -59,6 +61,7 @@ public class AuthController {
                 .path("/")
                 .httpOnly(true)
                 .domain("")
+                .maxAge(86400)
                 .secure(true)
                 .build();
         return ResponseEntity.ok()
