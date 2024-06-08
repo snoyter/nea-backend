@@ -27,3 +27,7 @@ spring:
 
 jwt:
   secret: test123321SSS
+
+server:
+  servlet:
+    context-path: /api

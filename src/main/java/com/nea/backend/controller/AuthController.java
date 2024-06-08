@@ -51,18 +51,19 @@ public class AuthController {
                     )
             );
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            throw new Exception("Пользователь заблокирован", e);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new Exception("Неправильный пароль или логин", e);
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
         HttpCookie cookie = ResponseCookie.from("accessToken", jwtToken)
                 .path("/")
                 .httpOnly(true)
-                .domain("")
+                .domain(".nsk-ecoacademy.ru")
                 .maxAge(86400)
                 .secure(true)
+                .sameSite("Strict")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, String.valueOf(cookie))

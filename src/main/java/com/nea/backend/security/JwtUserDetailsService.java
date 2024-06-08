@@ -18,19 +18,19 @@ public class JwtUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userFromDB = userService.getUserByUsername(username);
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User userFromDB = userService.getUserByUsername(login);
         if (userFromDB == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("Не найден пользователь с таким логином: " + login);
         }
-        if (userFromDB.getLogin().equals(username)) {
+        if (userFromDB.getLogin().equals(login)) {
             return new org.springframework.security.core.userdetails.User(
                     userFromDB.getLogin(),
                     userFromDB.getPassword(),
                     List.of(new SimpleGrantedAuthority(userFromDB.getUserType().getType()))
             );
         } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("Не найден пользователь с таким логином: " + login);
         }
     }
 }
