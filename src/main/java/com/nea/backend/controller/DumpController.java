@@ -10,6 +10,7 @@ import com.nea.backend.repository.DumpToFileRepository;
 import com.nea.backend.repository.FileRepository;
 import com.nea.backend.response.SuccessImageUploadResponse;
 import com.nea.backend.security.CurrentUser;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,13 @@ public class DumpController {
     private final Path root = Paths.get("uploads");
 
     @GetMapping
+    @Operation(summary = "Получить список все свалок")
     public Page<Dump> getAll(Pageable pageable) {
         return dumpRepository.findAll(pageable);
     }
 
     @PostMapping
+    @Operation(summary = "Добавить информацию о свалке")
     public SuccessImageUploadResponse createDump(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("comment") String comment,
@@ -82,7 +85,7 @@ public class DumpController {
                         i.getContentType()
                 );
             } catch (IOException e) {
-                log.error("Ошибка {}", e);
+                log.error("Ошибка сохранения изображения {}", e);
                 throw new ApiError.FileUploadException();
             }
         }).map(picture -> {

@@ -6,6 +6,7 @@ import com.nea.backend.model.Publication;
 import com.nea.backend.model.PublicationType;
 import com.nea.backend.repository.PublicationRepository;
 import com.nea.backend.repository.PublicationTypeRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class PublicationController {
     private final PublicationTypeRepository publicationTypeRepository;
 
     @GetMapping
+    @Operation(summary = "Получить публикации")
+
     public Page<Publication> getAll(
             Pageable pageable,
             @RequestParam(value = "type",required = false) Integer publicationType
@@ -41,6 +44,7 @@ public class PublicationController {
     }
 
     @PutMapping
+    @Operation(summary = "Обновить публикацию")
     public void update(
             @RequestBody PublicationUpdateDto dto
     ) {
@@ -55,6 +59,7 @@ public class PublicationController {
     }
 
     @DeleteMapping("{id}")
+    @Operation(summary = "Удалить публикацию")
     public void delete(
             @PathVariable("id") Integer id
     ) {
@@ -62,6 +67,7 @@ public class PublicationController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Поиск по публикациям")
     public Page<Publication> search(
             Pageable pageable,
             @RequestParam("search") String searchQuery
@@ -74,6 +80,7 @@ public class PublicationController {
     }
 
     @GetMapping("{id}")
+    @Operation(summary = "Получить публикацию по id")
     public Publication getAll(@PathVariable("id") Integer id) {
         return publicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Нет такой сущности"));
@@ -81,6 +88,7 @@ public class PublicationController {
 
     @PostMapping
     @Secured("ROLE_ADMIN")
+    @Operation(summary = "Создать новую публикацию")
     public Publication create(@RequestBody PublicationCreateDto dto) {
         PublicationType type = publicationTypeRepository.findById(dto.getTypeId())
                 .orElseThrow(() -> new RuntimeException("нет такого типа контента"));

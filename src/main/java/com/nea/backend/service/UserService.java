@@ -3,7 +3,6 @@ package com.nea.backend.service;
 import com.nea.backend.dto.UserChangePasswordDto;
 import com.nea.backend.dto.UserChangeTypeDto;
 import com.nea.backend.dto.UserCreateDTO;
-import com.nea.backend.dto.UserLoginDTO;
 import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.User;
 import com.nea.backend.model.UserType;
@@ -78,5 +77,13 @@ public class UserService {
             throw new RuntimeException("Старый пароль не одинаковый!");
         }
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+    }
+
+    public User giveAdmin(Integer id) {
+        changeUserType(new UserChangeTypeDto(
+                id,
+                1
+        ));
+        return getOneById(id);
     }
 }
