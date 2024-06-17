@@ -19,7 +19,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/request")
-@Tag(name = "Запросы на сотрудничество")
+@Tag(name = "Сотрудничество")
 @Transactional
 @RequiredArgsConstructor
 public class RequestController {

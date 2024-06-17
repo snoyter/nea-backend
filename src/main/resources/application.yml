@@ -31,3 +31,7 @@ jwt:
 server:
   servlet:
     context-path: /api
+
+upload:
+  path:
+    /root/uploads

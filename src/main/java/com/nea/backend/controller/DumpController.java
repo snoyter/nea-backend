@@ -15,16 +15,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +40,8 @@ public class DumpController {
     private final DumpToFileRepository dumpToFileRepository;
     private final CurrentUser currentUser;
 
-    private final Path root = Paths.get("uploads");
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @GetMapping
     @Operation(summary = "Получить список все свалок")
@@ -59,18 +59,18 @@ public class DumpController {
     ) {
         User user = currentUser.getUser();
 
-        if (!root.toFile().exists()) {
-            root.toFile().mkdir();
-            this.root.toFile().setReadable(true);
-            this.root.toFile().setWritable(true);
+        if (files != null) {
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
         }
 
         List<Integer> uploadImagesIds = Arrays.stream(files).map(i -> {
             try {
                 try {
-                    Path resolve = this.root.resolve(i.getOriginalFilename());
-                    resolve.toFile().setReadable(true);
-                    Files.copy(i.getInputStream(), resolve);
+                    File uploadDir = new File(uploadPath);
+                    i.transferTo(uploadDir);
                 } catch (FileAlreadyExistsException ex) {
                     return fileRepository.findByContent(i.getOriginalFilename())
                             .orElse(new Picture(

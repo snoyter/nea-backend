@@ -3,6 +3,7 @@ package com.nea.backend.service;
 import com.nea.backend.dto.UserChangePasswordDto;
 import com.nea.backend.dto.UserChangeTypeDto;
 import com.nea.backend.dto.UserCreateDTO;
+import com.nea.backend.emuns.Role;
 import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.User;
 import com.nea.backend.model.UserType;
@@ -39,14 +40,14 @@ public class UserService {
     }
 
     public User create(UserCreateDTO dto) {
-        UserType type = userTypeRepository.findById(2)
+        UserType type = userTypeRepository.findById(Role.USER.getId())
                 .orElseThrow(() -> new RuntimeException("Нет такого типа пользователей"));
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userRepository.save(new User(dto, type));
     }
 
     public void createNewEmployee(UserCreateDTO dto) {
-        UserType type = userTypeRepository.findById(1)
+        UserType type = userTypeRepository.findById(Role.ADMIN.getId())
                 .orElseThrow(() -> new RuntimeException("Нет такого типа пользователей"));
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(new User(dto, type));
@@ -74,7 +75,7 @@ public class UserService {
         User user = userRepository.findById(currentUser.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Нет такого пользователя!"));
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
-            throw new RuntimeException("Старый пароль не одинаковый!");
+            throw new RuntimeException("Пароли не одинаковые!");
         }
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
     }

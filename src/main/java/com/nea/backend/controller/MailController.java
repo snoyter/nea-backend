@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Почта")
 @Transactional
 @RequiredArgsConstructor
-public class MainController {
+public class MailController {
     private final MailRepository mailRepository;
     private final CurrentUser currentUser;
 
