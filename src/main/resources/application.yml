@@ -22,6 +22,12 @@ spring:
     generate-ddl: false
   flyway:
     enabled: true
+  mail:
+    host: smtp.mail.ru
+    username: snoyter@mail.ru
+    password: MfU454qpp6gKDutdqx1i
+    port: 465
+    protocol: smtps
 
 jwt:
   secret: test123321SSS
@@ -35,3 +41,6 @@ upload:
     C:\Users\snoyter\Desktop\01_Projects\backend\images\
 
 hostname: localhost
+
+mail:
+  nea: nea@mail.ru
