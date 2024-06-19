@@ -1,7 +1,7 @@
 create table public.request
 (
     id         serial                      not null,
-    user_id    integer,
+    user_id    integer unique,
     approved   boolean default false,
     created_at timestamp(6) with time zone not null default now(),
     primary key (id)

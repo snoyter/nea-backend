@@ -13,6 +13,7 @@ public class Mail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "user_id")
     private Integer userId;
 
     public Mail(Integer userId) {

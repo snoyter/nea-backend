@@ -8,20 +8,15 @@ import com.nea.backend.security.TokenManager;
 import com.nea.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Instant;
 
 /**
  * Модуль авторизации
@@ -57,22 +52,13 @@ public class AuthController {
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
-        HttpCookie cookie = ResponseCookie.from("accessToken", jwtToken)
-                .path("/")
-                .httpOnly(true)
-                .domain(".nsk-ecoacademy.ru")
-                .maxAge(86400)
-                .secure(true)
-                .sameSite("Strict")
-                .build();
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, String.valueOf(cookie))
                 .body(new JwtResponseModel(jwtToken));
     }
 
     @PostMapping("/register")
     @Operation(summary = "Регистрация пользователя")
     public void register(@RequestBody UserCreateDTO request) {
-        userService.create(request);
+        userService.createRegularUser(request);
     }
 }

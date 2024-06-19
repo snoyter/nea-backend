@@ -34,7 +34,7 @@ public class CurrentUser {
             if (jwtUser == null) {
                 throw new ApiError.UserNotLoggedIn();
             }
-            user = userService.getUserByUsername(jwtUser.getUsername());
+            user = userService.findUserByUsername(jwtUser.getUsername());
         }
         return user;
     }

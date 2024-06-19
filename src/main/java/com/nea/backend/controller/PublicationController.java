@@ -27,9 +27,8 @@ public class PublicationController {
     private final PublicationRepository publicationRepository;
     private final PublicationTypeRepository publicationTypeRepository;
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить публикации")
-
     public Page<Publication> getAll(
             Pageable pageable,
             @RequestParam(value = "type",required = false) Integer publicationType
@@ -43,7 +42,7 @@ public class PublicationController {
         return publicationRepository.findAll(pageable);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     @Operation(summary = "Обновить публикацию")
     public void update(
             @RequestBody PublicationUpdateDto dto
@@ -58,7 +57,7 @@ public class PublicationController {
         publicationRepository.save(publicationFromDB);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удалить публикацию")
     public void delete(
             @PathVariable("id") Integer id
@@ -70,7 +69,7 @@ public class PublicationController {
     @Operation(summary = "Поиск по публикациям")
     public Page<Publication> search(
             Pageable pageable,
-            @RequestParam("search") String searchQuery
+            @RequestParam("text") String searchQuery
     ) {
         return publicationRepository.findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCase(
                 pageable,
@@ -86,7 +85,7 @@ public class PublicationController {
                 .orElseThrow(() -> new RuntimeException("Нет такой сущности"));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Secured("ROLE_ADMIN")
     @Operation(summary = "Создать новую публикацию")
     public Publication create(@RequestBody PublicationCreateDto dto) {

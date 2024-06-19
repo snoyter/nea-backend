@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -43,13 +45,13 @@ public class DumpController {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить список все свалок")
     public Page<Dump> getAll(Pageable pageable) {
         return dumpRepository.findAll(pageable);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Добавить информацию о свалке")
     public SuccessImageUploadResponse createDump(
             @RequestParam("files") MultipartFile[] files,
@@ -69,7 +71,7 @@ public class DumpController {
         List<Integer> uploadImagesIds = Arrays.stream(files).map(i -> {
             try {
                 try {
-                    File uploadDir = new File(uploadPath);
+                    File uploadDir = new File(uploadPath + "/" + i.getOriginalFilename());
                     i.transferTo(uploadDir);
                 } catch (FileAlreadyExistsException ex) {
                     return fileRepository.findByContent(i.getOriginalFilename())

@@ -1,5 +1,6 @@
 package com.nea.backend.controller;
 
+import com.nea.backend.exception.ApiError;
 import com.nea.backend.model.Mail;
 import com.nea.backend.repository.MailRepository;
 import com.nea.backend.security.CurrentUser;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,11 @@ public class MailController {
         Mail mailSubscribe = new Mail(
                 currentUser.getUser().getId()
         );
-        mailRepository.save(mailSubscribe);
+
+        try {
+            mailRepository.save(mailSubscribe);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ApiError.UserAlreadySubscribed();
+        }
     }
 }

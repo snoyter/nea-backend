@@ -6,7 +6,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: 'jdbc:postgresql://${DB_HOST:185.84.163.95}:${DB_PORT:5432}/${DB_NAME:nea}'
+    url: 'jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:nea}'
     username: ${DB_USERNAME:nastya}
     password: ${DB_PASSWORD:123321}
     driver-class-name: 'org.postgresql.Driver'
@@ -32,6 +32,6 @@ server:
 
 upload:
   path:
-    C:\Users\snoyter\Desktop\01_Projects\backend\images\
+    /root/uploads
 
-hostname: localhost
+hostname: nsk-ecoacademy.ru

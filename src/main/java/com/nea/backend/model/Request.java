@@ -16,7 +16,7 @@ public class Request {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     private Boolean approved;
@@ -26,5 +26,7 @@ public class Request {
 
     public Request(User user) {
         this.user = user;
+        this.approved = false;
+        this.createdAt = Instant.now();
     }
 }

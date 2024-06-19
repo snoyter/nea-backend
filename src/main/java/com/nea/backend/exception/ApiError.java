@@ -20,13 +20,20 @@ public class ApiError extends RuntimeException {
     public static class UserNotExist extends ApiError {}
 
     @Message("Пользователь не авторизован")
-    public static class UserNotLoggedIn extends ApiError {
-
-    }
+    public static class UserNotLoggedIn extends ApiError {}
 
     @Message("Ошибка загрузки изображений на сервер")
-    public static class FileUploadException extends ApiError {
+    public static class FileUploadException extends ApiError {}
+
+    @Message("Пользователь с таким логином уже существует")
+    public static class LoginAlreadyUsed extends ApiError {}
+
+    @Message("Вы уже подписаны")
+    public static class UserAlreadySubscribed extends ApiError {
     }
+
+    @Message("Вы уже отправили заявку")
+    public static class UserAlreadyConnected extends ApiError {}
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Message {

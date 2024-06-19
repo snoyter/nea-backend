@@ -30,26 +30,26 @@ public class UserController {
     @GetMapping("/all")
     @Operation(summary = "Получить всех пользователей")
     public Page<User> getUsers(Pageable pageable) {
-        return userService.getAll(pageable);
+        return userService.findAll(pageable);
     }
 
-    @GetMapping
+    @GetMapping("/current")
     @Operation(summary = "Получить текущего пользователя, если авторизован")
     public UserDTO getUser() {
         return new UserDTO(currentUser.getUser());
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping
+    @PostMapping("/create")
     @Operation(summary = "Создать нового сотрудника")
     public void create(
             @RequestBody UserCreateDTO dto
     ) {
-        userService.createNewEmployee(dto);
+        userService.createEmployeeUser(dto);
     }
 
     @Secured("ROLE_ADMIN")
-    @PutMapping("/change")
+    @PutMapping("/update")
     @Operation(summary = "Сменить тип сотрудника")
     public void changeUserType(
             @RequestBody UserChangeTypeDto userChangeTypeDto
@@ -57,7 +57,7 @@ public class UserController {
         userService.changeUserType(userChangeTypeDto);
     }
 
-    @PutMapping
+    @PutMapping("/update/password")
     @Operation(summary = "Обновить пароль")
     public void changePassword(
             @RequestBody UserChangePasswordDto dto
@@ -66,11 +66,11 @@ public class UserController {
     }
 
     @Secured("ROLE_ADMIN")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удалить пользователя")
     public void deleteUser(
             @PathVariable("id") Integer id
     ) {
-        userService.delete(id);
+        userService.deleteById(id);
     }
 }
