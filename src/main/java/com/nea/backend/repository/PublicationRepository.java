@@ -9,14 +9,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PublicationRepository extends JpaRepository<Publication, Integer> {
-    Page<Publication> findAllByType(
+    Page<Publication> findAllByTypeOrderByIdDesc(
             Pageable pageable,
             PublicationType publicationType
     );
 
-    Page<Publication> findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCase(
+    Page<Publication> findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCaseOrderByIdDesc(
             Pageable pageable,
             String titleQuery,
             String contentQuery
     );
+
+    Page<Publication> findAllByOrderByIdDesc(Pageable pageable);
 }

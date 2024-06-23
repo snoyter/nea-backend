@@ -36,10 +36,10 @@ public class PublicationController {
         if (publicationType != null) {
             Optional<PublicationType> type = publicationTypeRepository.findById(publicationType);
             if (type.isPresent()) {
-                return publicationRepository.findAllByType(pageable, type.get());
+                return publicationRepository.findAllByTypeOrderByIdDesc(pageable, type.get());
             }
         }
-        return publicationRepository.findAll(pageable);
+        return publicationRepository.findAllByOrderByIdDesc(pageable);
     }
 
     @PutMapping("/update")
@@ -71,7 +71,7 @@ public class PublicationController {
             Pageable pageable,
             @RequestParam("text") String searchQuery
     ) {
-        return publicationRepository.findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCase(
+        return publicationRepository.findAllByTitleContainsIgnoreCaseOrContentContainsIgnoreCaseOrderByIdDesc(
                 pageable,
                 searchQuery,
                 searchQuery
